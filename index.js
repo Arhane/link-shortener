@@ -6,8 +6,9 @@ const port = 3000;
 app.post('/shorten', (req, res) => {
     let body = [];
     req.on('data', (chunk) => {
-        body.push(JSON.parse(chunk.toString()));
+        body.push(chunk);
     }).on('end', () => {
+        body = JSON.parse(Buffer.concat(body).toString());
         console.log('body', body);
     })
 });
