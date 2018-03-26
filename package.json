@@ -5,7 +5,7 @@
   "author": "Andrey Lozhkin <las@htc-cs.ru>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon --inspect index.js"
   },
   "dependencies": {
     "express": "^4.16.3"
