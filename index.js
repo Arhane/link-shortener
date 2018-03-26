@@ -20,8 +20,13 @@ app.post('/shorten', (req, res) => {
     let shortUrl = '';
     let id = 5000;
     while (id) {
-        shortUrl += (alphabet[id%62]);
-        id = Math.round(id/62);
+        if (id < base) {
+            shortUrl += (alphabet[id]);
+            id = 0;
+        } else {
+            shortUrl += (alphabet[id%base]);
+            id = (id - id%base) /base;
+        }
     }
     console.log('shortUrl', shortUrl);
     console.log('decode(shortUrl)', decode(shortUrl));
@@ -29,12 +34,11 @@ app.post('/shorten', (req, res) => {
 });
 
 function decode(shortURL){
-    let id = 0; // initialize result
+    let id = 0;
     const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const base = alphabet.length;
 
-    // A simple base conversion logic
-    // shortURL.split('').forEach((letter) => id = alphabet.split('').findIndex((item) => item === letter) + id * 62);
+    shortURL.split('').reverse().forEach(letter => id = id * base + alphabet.split('').findIndex((item) => item === letter));
 
     return id;
 }
