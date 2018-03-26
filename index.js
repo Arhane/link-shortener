@@ -3,14 +3,18 @@ const Buffer = require('buffer').Buffer;
 const app = express();
 const port = 3000;
 
-app.post('/shorten', (req, res) => {
+app.use((req, res, next) => {
     let body = [];
     req.on('data', (chunk) => {
         body.push(chunk);
     }).on('end', () => {
-        body = JSON.parse(Buffer.concat(body).toString());
-        console.log('body', body);
+        req.body = JSON.parse(Buffer.concat(body).toString());
+        next();
     })
+});
+
+app.post('/shorten', (req, res) => {
+    console.log('req.body', req.body);
 });
 
 
