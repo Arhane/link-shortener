@@ -1,5 +1,6 @@
 const express = require('express');
 const Buffer = require('buffer').Buffer;
+const MongoClient = require('mongodb').MongoClient;
 const encode = require('./helpers/decodeEncode').encode;
 const decode = require('./helpers/decodeEncode').decode;
 const app = express();
@@ -15,7 +16,12 @@ app.use((req, res, next) => {
     })
 });
 
-app.post('/shorten', (req, res) => {
+app.post('/shorten', async (req, res) => {
+    const { link } = req.body;
+    const connection = await MongoClient.connect('mongodb://Andrew:ANDr987!Z@ds121091.mlab.com:21091/up-skills');
+    const db = await connection.db('up-skills');
+    const collection = db.collection('links');
+    const document = await collection.insertOne({ link });
 });
 
 
