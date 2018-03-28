@@ -4,6 +4,7 @@ const MongoClient = require('mongodb').MongoClient;
 const encode = require('./helpers/decodeEncode').encode;
 const decode = require('./helpers/decodeEncode').decode;
 const getNextSequence = require('./helpers/getNextSequence');
+const config = require('./config.db');
 const app = express();
 const host = "127.0.0.1";
 const port = 3000;
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
 app.post('/shorten', async (req, res) => {
     try {
         const { link } = req.body;
-        const connection = await MongoClient.connect('mongodb://Andrew:ANDr987!Z@ds121091.mlab.com:21091/up-skills');
+        const connection = await MongoClient.connect(config);
         const db = await connection.db('up-skills');
         const collection = db.collection('links');
         const id = await getNextSequence('userid', db);
@@ -37,11 +38,10 @@ app.post('/shorten', async (req, res) => {
 
 app.get('/:link', async (req, res) => {
     const { link } = req.params;
-    const connection = await MongoClient.connect('mongodb://Andrew:ANDr987!Z@ds121091.mlab.com:21091/up-skills');
+    const connection = await MongoClient.connect(config);
     const db = await connection.db('up-skills');
     const collection = db.collection('links');
     const document = await collection.findOne({ id: decode(link) });
-    console.log('document', document);
     if (document && document.link) {
         res.redirect(`${document.link}`);
     } else {
