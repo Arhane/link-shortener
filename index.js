@@ -1,8 +1,7 @@
 const express = require('express');
 const Buffer = require('buffer').Buffer;
-const MongoClient = require('mongodb').MongoClient;
-const encode = require('./helpers/decodeEncode').encode;
-const decode = require('./helpers/decodeEncode').decode;
+const { MongoClient } = require('mongodb');
+const {encode, decode } = require('./helpers/decodeEncode');
 const getNextSequence = require('./helpers/getNextSequence');
 const { host, port, db } = require('./config');
 const app = express();
