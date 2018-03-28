@@ -4,10 +4,9 @@ const MongoClient = require('mongodb').MongoClient;
 const encode = require('./helpers/decodeEncode').encode;
 const decode = require('./helpers/decodeEncode').decode;
 const getNextSequence = require('./helpers/getNextSequence');
-const config = require('./config.db');
+const { host, port, db } = require('./config');
 const app = express();
-const host = "127.0.0.1";
-const port = 3000;
+const urlRegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
 app.use(express.static('static'));
 app.use((req, res, next) => {
@@ -25,12 +24,17 @@ app.use((req, res, next) => {
 app.post('/shorten', async (req, res) => {
     try {
         const { link } = req.body;
-        const connection = await MongoClient.connect(config);
-        const db = await connection.db('up-skills');
-        const collection = db.collection('links');
-        const id = await getNextSequence('userid', db);
-        await collection.insertOne({ id, link });
-        res.send({ link: `${host}:${port}/${encode(id)}` });
+
+        if (link.match(urlRegExp)) {
+            const connection = await MongoClient.connect(db);
+            const db = await connection.db('up-skills');
+            const collection = db.collection('links');
+            const id = await getNextSequence('userid', db);
+            await collection.insertOne({ id, link });
+            res.send({ link: `http://${host}:${port}/${encode(id)}` });
+        } else {
+            res.send({ message: 'Link is not correct' })
+        }
     } catch (e) {
         res.send({ e })
     }
@@ -38,7 +42,7 @@ app.post('/shorten', async (req, res) => {
 
 app.get('/:link', async (req, res) => {
     const { link } = req.params;
-    const connection = await MongoClient.connect(config);
+    const connection = await MongoClient.connect(db);
     const db = await connection.db('up-skills');
     const collection = db.collection('links');
     const document = await collection.findOne({ id: decode(link) });
