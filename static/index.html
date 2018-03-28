@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form>
+        <input placeholder='Insert the url'>
+        Short url:
+        <p></p>
+    </form>
+</body>
+<script>
+    const form = document.getElementsByTagName('form')[0];
+    console.log('form', form);
+    form.addEventListener('submit', function (e) {
+        console.log('e', e);
+        e.preventDefault();
+        const link = document.getElementsByTagName('input')[0].value;
+        fetch('/shorten', { method: 'POST', body: JSON.stringify({ link }) })
+            .then((res) => res.json())
+            .then(res =>{
+                const shortUrlPlace = document.getElementsByTagName('p')[0];
+                shortUrlPlace.innerHTML = `<a href='${res.link}'>${res.link}</a>`
+                console.log('res.link', res.link)}
+            )
+    })
+</script>
+</html>
