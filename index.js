@@ -12,7 +12,9 @@ app.use((req, res, next) => {
     req.on('data', (chunk) => {
         body.push(chunk);
     }).on('end', () => {
-        req.body = JSON.parse(Buffer.concat(body).toString());
+        if (body.length !== 0) {
+            req.body = JSON.parse(Buffer.concat(body).toString());
+        }
         next();
     })
 });
