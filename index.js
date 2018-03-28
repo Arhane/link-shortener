@@ -3,7 +3,7 @@ const Buffer = require('buffer').Buffer;
 const { MongoClient } = require('mongodb');
 const {encode, decode } = require('./helpers/decodeEncode');
 const getNextSequence = require('./helpers/getNextSequence');
-const { host, port, db } = require('./config');
+const { host, port, dbConfig } = require('./config');
 const app = express();
 const urlRegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
 
@@ -25,7 +25,7 @@ app.post('/shorten', async (req, res) => {
         const { link } = req.body;
 
         if (link.match(urlRegExp)) {
-            const connection = await MongoClient.connect(db);
+            const connection = await MongoClient.connect(dbConfig);
             const db = await connection.db('up-skills');
             const collection = db.collection('links');
             const id = await getNextSequence('userid', db);
@@ -41,7 +41,7 @@ app.post('/shorten', async (req, res) => {
 
 app.get('/:link', async (req, res) => {
     const { link } = req.params;
-    const connection = await MongoClient.connect(db);
+    const connection = await MongoClient.connect(dbConfig);
     const db = await connection.db('up-skills');
     const collection = db.collection('links');
     const document = await collection.findOne({ id: decode(link) });
