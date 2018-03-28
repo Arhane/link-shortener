@@ -3,6 +3,7 @@ const Buffer = require('buffer').Buffer;
 const MongoClient = require('mongodb').MongoClient;
 const encode = require('./helpers/decodeEncode').encode;
 const decode = require('./helpers/decodeEncode').decode;
+const getNextSequence = require('./helpers/getNextSequence');
 const app = express();
 const port = 3000;
 
@@ -21,7 +22,14 @@ app.post('/shorten', async (req, res) => {
     const connection = await MongoClient.connect('mongodb://Andrew:ANDr987!Z@ds121091.mlab.com:21091/up-skills');
     const db = await connection.db('up-skills');
     const collection = db.collection('links');
-    const document = await collection.insertOne({ link });
+    const id = await getNextSequence('userid', db);
+    const document = await collection.insertOne({ id, link });
+    res.send({ link: encode(id) });
+});
+
+app.get('/:link', (req, res) => {
+    const { link } = req.params;
+    console.log('link', link);
 });
 
 
