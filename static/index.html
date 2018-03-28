@@ -6,7 +6,8 @@
 </head>
 <body>
     <form>
-        <input placeholder='Insert the url'>
+        <input pattern='https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)' required placeholder='Insert the url'>
+        <button>Submit</button>
         Short url:
         <p></p>
     </form>
@@ -22,7 +23,7 @@
             .then((res) => res.json())
             .then(res =>{
                 const shortUrlPlace = document.getElementsByTagName('p')[0];
-                shortUrlPlace.innerHTML = `<a href='${res.link}'>${res.link}</a>`
+                shortUrlPlace.innerHTML = `<a target='_blank' href='${res.link}'>${res.link}</a>`
                 console.log('res.link', res.link)}
             )
     })
