@@ -29,9 +29,18 @@ app.post('/shorten', async (req, res) => {
     res.send({ link: encode(id) });
 });
 
-app.get('/:link', (req, res) => {
+app.get('/:link', async (req, res) => {
     const { link } = req.params;
-    console.log('link', link);
+    const connection = await MongoClient.connect('mongodb://Andrew:ANDr987!Z@ds121091.mlab.com:21091/up-skills');
+    const db = await connection.db('up-skills');
+    const collection = db.collection('links');
+    const document = await collection.findOne({ id: decode(link) });
+    console.log('document', document);
+    if (document && document.link) {
+        res.redirect(`https://${document.link}`);
+    } else {
+        res.send({ message: 'Could not find the page' })
+    }
 });
 
 
