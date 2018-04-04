@@ -1,6 +1,7 @@
-const getNextSequence = async (name, db) => {
-    const ret = db.collection('counters').findOneAndUpdate(
-            { id: name }
+const { collections: { counters } } = require('../constants');
+const getNextSequence = async (db) => {
+    const ret = db.collection(counters).findOneAndUpdate(
+            { id: 'userid' }
         ,
         {
              $inc: { seq: 1 }
