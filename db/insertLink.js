@@ -8,5 +8,6 @@ module.exports = async (link) => {
     const db = await connection.db(dbName);
     const collection = db.collection(links);
     const id = await getNextSequence(db);
-    return collection.insertOne({ id, link });
+    await collection.insertOne({ id, link });
+    return id;
 };

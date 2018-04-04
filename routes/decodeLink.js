@@ -1,11 +1,12 @@
 const { decode } = require('../helpers/decodeEncode');
 const findLink = require('../db/findLink');
 module.exports = async (req, res) => {
-    const { link } = req.params;
+    const { link: shortenedLink } = req.params;
     try {
-        const link = await findLink(decode(link));
+        const link = await findLink(decode(shortenedLink));
         res.redirect(`${link}`);
     } catch (e) {
-        res.send({ message: e.message })
-    };
-}
+        res.status(404);
+        res.send({ message: e.message });
+    }
+};
